@@ -1,11 +1,5 @@
 import { Schema, model } from 'mongoose';
 
-const categorySchema = new Schema({
-	name: {
-		required: true,
-		type: String,
-	},
-});
 
 const Product_Model = new Schema(
 	{
@@ -23,7 +17,7 @@ const Product_Model = new Schema(
 		},
 		image: {
 			required: true,
-			type: String,
+			type: Object,
 		},
 		category: {
 			required: true,
