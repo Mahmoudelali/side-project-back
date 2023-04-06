@@ -44,14 +44,20 @@ const getAllProduct = async (req, res) => {
 const getProductByName = async (req, res) => {
 	try {
 		const { name } = req.params;
-		const product = await product_model.findOne({ name });
-		if (!product) {
-			return res.json({ message: 'Product Not found' });
-		} else {
-			return res.json({ message: product });
-		}
+		await product_model
+			.findOne({ name })
+			.then((product) => {
+				if (!product) {
+					return res.json({ message: 'Product Not found' });
+				} else {
+					return res.json({ message: product });
+				}
+			})
+			.catch((err) => {
+				console.log(err.message);
+			});
 	} catch (error) {
-		console.log(error.message);
+		return res.json({ message: error.message });
 	}
 };
 
@@ -72,17 +78,17 @@ const getProductsByCategory = async (req, res) => {
 const deleteByID = async (req, res) => {
 	try {
 		const { id } = req.params;
-		product_model.findOneAndDelete({ _id: id }).then((item) => {
+		const item = await product_model.findOneAndDelete({ _id: id });
+		console.log(item);
+		if (item) {
 			console.log(item);
-			if (item) {
-				console.log(item);
-				res.json({ message: 'deleted successfully' });
-			} else {
-				res.json({ message: 'Product not found' });
-			}
-		});
+			res.json({ message: 'deleted successfully' });
+		} else {
+			console.log(item);
+			res.json({ message: 'Product not found' });
+		}
 	} catch (error) {
-		console.log(error);
+		console.log(error.message);
 	}
 };
 
@@ -95,7 +101,7 @@ const updateProduct = async (req, res) => {
 			.then((response) => {
 				if (response) {
 					console.log(response);
-					response.json({
+					res.json({
 						message: 'Product updated successfully',
 					});
 				} else {

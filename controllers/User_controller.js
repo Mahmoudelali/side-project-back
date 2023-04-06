@@ -1,7 +1,35 @@
 import User_model from '../models/User_model.js';
 import bcrypt from 'bcrypt';
-import path from 'path';
-const __dirname = path.resolve();
+import jwt from 'jsonwebtoken';
+
+const loginUser = async (req, res) => {
+	try {
+		const { username, password } = req.body;
+		const user = await User_model.findOne({ username });
+		if (user) {
+			const isMatch = await bcrypt.compare(password, user.password);
+			if (isMatch) {
+				const token = jwt.sign(
+					{
+						id: user._id,
+						username: user.username,
+					},
+					process.env.SECRET_KEY,
+					{
+						expiresIn: '1h',
+					},
+				);
+				res.set('auth-token', 'Bearer ' + token).json({
+					message: 'login successful',
+				});
+			} else {
+				res.status(401).json({ message: 'invalid credentials' });
+			}
+		}
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 const addUser = async (req, res) => {
 	try {
@@ -95,4 +123,11 @@ const deleteUser = async (req, res) => {
 	}
 };
 
-export { addUser, getAllUsers, getUserByUsername, updateUser, deleteUser };
+export {
+	addUser,
+	getAllUsers,
+	getUserByUsername,
+	updateUser,
+	deleteUser,
+	loginUser,
+};
