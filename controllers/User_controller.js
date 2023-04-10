@@ -1,6 +1,7 @@
 import User_model from '../models/User_model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import Cookies from 'cookies';
 
 const loginUser = async (req, res) => {
 	try {
@@ -16,14 +17,24 @@ const loginUser = async (req, res) => {
 					},
 					process.env.SECRET_KEY,
 					{
-						expiresIn: '1h',
+						expiresIn: '24h',
 					},
 				);
-				res.set('auth-token', 'Bearer ' + token).json({
-					message: 'login successful',
-				});
+
+				return res
+					.setHeader('auth-token', 'Bearer ' + token)
+					.status(200)
+					.json({
+						token,
+						username: user.username,
+						role: user.isAdmin,
+						// reqData: req,
+					});
+				// res.header('Authorization', 'Bearer ' + token);
 			} else {
-				res.status(401).json({ message: 'invalid credentials' });
+				return res.status(401).json({
+					message: 'invalid credentials',
+				});
 			}
 		}
 	} catch (error) {
@@ -51,6 +62,7 @@ const addUser = async (req, res) => {
 						} else
 							res.status(404).json({
 								message: 'cannot create user',
+								
 							});
 					});
 				}
@@ -80,9 +92,9 @@ const getUserByUsername = async (req, res) => {
 			username: req.params.username,
 		});
 		if (!user) {
-			res.status(404).json({ message: 'user not found' });
+			return res.status(404).json({ message: 'user not found' });
 		} else {
-			res.status(200).json(user);
+			return res.status(200).json(user);
 		}
 	} catch (error) {
 		console.log(error.message);
@@ -92,19 +104,27 @@ const getUserByUsername = async (req, res) => {
 const updateUser = async (req, res) => {
 	try {
 		const { username } = req.params;
+		console.log('from api');
+
 		await User_model.findOneAndUpdate(
 			{ username },
 			{ $set: req.body },
 			{ new: true },
-		).then((user) => {
-			if (user) {
-				res.json({ user });
-			} else {
-				res.status(404).json({ message: 'user not found' });
-			}
-		});
+		)
+			.then((user) => {
+				if (user) {
+					console.log(user);
+					return res.json({ user });
+				} else {
+					console.log(user);
+					res.status(404).json({ message: 'user not found' });
+				}
+			})
+			.catch((err) => {
+				console.log(err.message);
+			});
 	} catch (error) {
-		console.log(error);
+		res.status(404).json({ message: error.message });
 	}
 };
 
@@ -119,7 +139,8 @@ const deleteUser = async (req, res) => {
 			res.json({ message: 'user not found' });
 		}
 	} catch (error) {
-		console.log(error);
+		console.log(error.messsage);
+		return res.json({ message: error.message });
 	}
 };
 

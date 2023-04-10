@@ -22,9 +22,11 @@ const addProduct = async (req, res) => {
 			})
 			.catch((err) => {
 				console.log(err.message);
+				return res.json({ err: err.message });
 			});
 	} catch (error) {
 		console.log(error.message);
+		return res.json({ err: error.message });
 	}
 };
 
@@ -101,20 +103,22 @@ const updateProduct = async (req, res) => {
 			.then((response) => {
 				if (response) {
 					console.log(response);
-					res.json({
+					return res.json({
 						message: 'Product updated successfully',
 					});
 				} else {
-					response.json({ message: 'Product not found' });
+					return res.json({ message: 'Product not found' });
 				}
 			})
 			.catch((err) => {
-				console.log(err.message);
+				return res.json({ message: err.message });
 			});
 	} catch (error) {
+		return res.json({ message: error.message });
 		console.log(error);
 	}
 };
+
 export {
 	addProduct,
 	getAllProduct,

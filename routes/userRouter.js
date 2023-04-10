@@ -13,9 +13,11 @@ import express from 'express';
 
 const router = express.Router();
 
+//login user
+router.post('/login', loginUser);
 // add user
-router.post('/create', auth_user, addUser);
-// get users
+router.post('/create', addUser);
+// get usersx
 router.get('/', auth_user, getAllUsers);
 // get by username
 router.get('/:username', auth_user, getUserByUsername);
@@ -23,7 +25,5 @@ router.get('/:username', auth_user, getUserByUsername);
 router.put('/update/:username', auth_user, updateUser);
 // delete user by username
 router.delete('/delete/:username', auth_user, deleteUser);
-//login user
-router.post('/login', loginUser);
 
 export default router;
