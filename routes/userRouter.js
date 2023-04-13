@@ -18,7 +18,7 @@ router.post('/login', loginUser);
 // add user
 router.post('/create', addUser);
 // get usersx
-router.get('/', auth_user, getAllUsers);
+router.get('/', getAllUsers);
 // get by username
 router.get('/:username', auth_user, getUserByUsername);
 // update user by username

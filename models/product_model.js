@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 
-
 const Product_Model = new Schema(
 	{
 		name: {
@@ -22,6 +21,10 @@ const Product_Model = new Schema(
 		category: {
 			required: true,
 			type: String,
+		},
+		onPage: {
+			type: Boolean,
+			required: true,
 		},
 	},
 	{

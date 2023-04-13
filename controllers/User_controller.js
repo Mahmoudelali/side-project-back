@@ -62,7 +62,6 @@ const addUser = async (req, res) => {
 						} else
 							res.status(404).json({
 								message: 'cannot create user',
-								
 							});
 					});
 				}
@@ -77,12 +76,12 @@ const getAllUsers = async (req, res) => {
 	try {
 		const users = await User_model.find({});
 		if (!users) {
-			res.status(404).json({ message: 'no users found' });
+			return res.status(404).json({ message: 'no users found' });
 		} else {
-			res.status(200).json(users);
+			return res.status(200).json(users);
 		}
 	} catch (error) {
-		console.log(error.message);
+		return console.log(error.message);
 	}
 };
 
@@ -104,8 +103,6 @@ const getUserByUsername = async (req, res) => {
 const updateUser = async (req, res) => {
 	try {
 		const { username } = req.params;
-		console.log('from api');
-
 		await User_model.findOneAndUpdate(
 			{ username },
 			{ $set: req.body },

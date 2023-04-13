@@ -16,7 +16,6 @@ import { upload } from '../middleware/image-handler.js';
 router.post('/create', auth_user, upload.single('image'), addProduct);
 // view all products
 router.get('/', getAllProduct);
-
 // get a single product
 router.get('/:name', getProductByName);
 // get a single product by category name
